@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Azura Liu"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -24,9 +24,31 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 2. Explore the dimensions, column names, and structure of the datasets. 
 
 ```{r, message = FALSE}
-#1
+#1 set up
+getwd()
+library("tidyverse")
+library("lubridate")
+PM25.18<-read.csv("../Data/Raw/EPAair_PM25_NC2018_raw.csv")
+PM25.19<-read.csv("../Data/Raw/EPAair_PM25_NC2019_raw.csv")
+O3.19<-read.csv("../Data/Raw/EPAair_O3_NC2019_raw.csv")
+O3.18<-read.csv("../Data/Raw/EPAair_O3_NC2018_raw.csv")
 
-#2
+#2 explore datasets
+dim(PM25.18)
+colnames(PM25.18)
+str(PM25.18)
+
+dim(PM25.19)
+colnames(PM25.19)
+str(PM25.19)
+
+dim(O3.18)
+colnames(O3.18)
+str(O3.18)
+
+dim(O3.19)
+colnames(O3.19)
+str(O3.19)
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -36,13 +58,42 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r}
-#3
+#3 set date
+class(PM25.18$Date)
+PM25.18$Date<-as.Date(PM25.18$Date, format = "%m/%d/%Y")
+class(PM25.18$Date)
 
-#4
+class(PM25.19$Date)
+PM25.19$Date<-as.Date(PM25.19$Date, format = "%m/%d/%Y")
+class(PM25.19$Date)
 
-#5
+class(O3.18$Date)
+O3.18$Date<-as.Date(O3.18$Date, format = "%m/%d/%Y")
+class(O3.18$Date)
 
-#6
+class(O3.19$Date)
+O3.19$Date<-as.Date(O3.19$Date, format = "%m/%d/%Y")
+class(O3.19$Date)
+
+#4 subsetting
+PM25.18.sub<-select(PM25.18, Date, DAILY_AQI_VALUE,Site.Name, 
+                    AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+PM25.19.sub<-select(PM25.19,Date, DAILY_AQI_VALUE,Site.Name, 
+                    AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+O3.18.sub<-select(O3.18,Date, DAILY_AQI_VALUE,Site.Name, 
+                  AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+O3.19.sub<-select(O3.19,Date, DAILY_AQI_VALUE,Site.Name, 
+                  AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+#5 fill a column
+PM25.18.sub$AQS_PARAMETER_DESC<-("PM2.5")
+PM25.19.sub$AQS_PARAMETER_DESC<-("PM2.5")
+
+#6 save work
+write.csv(PM25.18.sub, row.names = FALSE, file ="../Data/Processed/EPAair_PM25_NC2018_processed.csv")
+write.csv(PM25.19.sub, row.names = FALSE, file ="../Data/Processed/EPAair_PM25_NC2019_processed.csv")
+write.csv(O3.18.sub, row.names = FALSE, file ="../Data/Processed/EPAair_O3_NC2019_processed.csv")
+write.csv(O3.19.sub, row.names = FALSE, file ="../Data/Processed/EPAair_O3_NC2018_processed.csv")
 
 ```
 
@@ -61,15 +112,40 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 11. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC2122_Processed.csv"
 
 ```{r}
-#7
+#7 combine datasets
+EPA_Air<-rbind(PM25.18.sub,PM25.19.sub,O3.18.sub,O3.19.sub)
+dim (EPA_Air) #this is correct
+summary(EPA_Air)
 
-#8
+#8 piping
+EPA_Air_Piped<-EPA_Air %>%
+  filter(Site.Name %in% c("Linville Falls", "Durham Armory", 
+                        "Leggett", "Hattie Avenue", 
+                        "Clemmons Middle", "Mendenhall School", 
+                        "Frying Pan Mountain", "West Johnston Co.", 
+                        "Garinger High School", "Castle Hayne", 
+                        "Pitt Agri. Center", "Bryson City", 
+                        "Millbrook School" ))%>%
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+  summarize(DAILY_AQI_VALUE=mean(DAILY_AQI_VALUE), 
+         SITE_LONGITUDE = mean(SITE_LONGITUDE),
+         SITE_LATITUDE = mean(SITE_LATITUDE))%>%
+  mutate(Month = month (Date),
+         Year = year (Date))
 
-#9
+dim(EPA_Air_Piped) 
+summary(EPA_Air_Piped)  
 
-#10
+#9 Spread AQI 
+EPA_Air_Wider <- pivot_wider(EPA_Air_Piped, 
+                             names_from = AQS_PARAMETER_DESC, values_from = DAILY_AQI_VALUE,values_fn = mean)
 
-#11
+#10 check dimension
+dim(EPA_Air_Wider)
+
+#11 save work
+write.csv(EPA_Air_Wider, row.names = FALSE, 
+          file ="../Data/Processed/EPAair_O3_PM25_NC2122_Processed.csv")
 
 ```
 
@@ -83,13 +159,26 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 
 ```{r}
-#12(a,b)
+#12(a,b) summary table
 
 
-#13
+EPA_Air_Summary <- 
+  EPA_Air_Wider %>%
+  group_by(Site.Name, Month, Year) %>%
+  summarise(mean.PM25 = mean(PM2.5), 
+            mean.O3 = mean(Ozone))%>%
+  filter(is.na(mean.PM25) == F & is.na(mean.O3)== F 
+         |is.na(mean.PM25) == T & is.na(mean.O3)== F 
+         |is.na(mean.PM25) == F & is.na(mean.O3)== T )
+  
+#cannot figure out how to drop only when both are null with drop_na 
+#nor removing the filtered results within pipe...I'm sure there is an easier way
+
+#13 check dim
+dim(EPA_Air_Summary)
 
 ```
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
 
-> Answer: 
+> Answer: "drop_na" is from the package "dplyr" and allows more data manipulation. We can specify the columns we want to apply the function to. "na.omit" removes the entire row if missing data is presented at all.
