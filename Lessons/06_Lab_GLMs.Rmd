@@ -24,7 +24,7 @@ PeterPaul.chem.nutrients <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_N
 # Set date to date format
 PeterPaul.chem.nutrients$sampledate <- as.Date(PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
 
-EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv", stringsAsFactors = TRUE)
+EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC2021_Processed.csv", stringsAsFactors = TRUE)
 # Set date to date format
 EPAair$Date <- as.Date(EPAair$Date, format = "%Y-%m-%d")
 
@@ -126,6 +126,7 @@ summary(O3.twosample2)
 plot(O3.twosample2)
 
 
+
 ```
 
 
@@ -151,7 +152,28 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 
 ```{r}
 #Exercise 2:
+library(viridis)
 
+Density<-
+  ggplot(EPAair, aes(x= Ozone, fill = as.factor(Year)))+
+  scale_fill_manual(values = c("yellow", "#0c2c84")) +
+  geom_density(alpha = 0.5)
+
+print(Density)
+
+Box<-
+  ggplot(EPAair, aes(x = as.factor(Year), y=Ozone))+
+  geom_boxplot()+
+  stat_summary(geom = "text", fun.y = max, vjust = -1, size = 5, label = c("a","b"))
+
+print(Box)
+
+Violin<-
+  ggplot(EPAair, aes(x=as.factor(Year), y=Ozone))+
+  geom_violin(draw_quantiles = 0.5)+
+  stat_summary(geom = "text", fun.y = max, vjust = -1, size = 5, label = c("a","b"))
+
+print(Violin)
 
 ```
 
@@ -181,9 +203,12 @@ What other variables can we add to improve model?
 ```{r}
 
 #Exercise 5: Build correlation plots and identify more possible explanatory variables to add to the regression.
+#install.packages("corrplot")
+library(corrplot)
+corr<-cor(EPAair %>% select (SITE_LATITUDE:PM2.5)%>%drop_na())
 
-
-
+corrplot(corr, method = "ellipse")
+corrplot.mixed(corr, upper = "ellipse")
 
 #Exercise 6: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
 
