@@ -1,0 +1,466 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Assignment 09: Data Scraping},
+  pdfauthor={Azura Liu},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Assignment 09: Data Scraping}
+\author{Azura Liu}
+\date{}
+
+\begin{document}
+\maketitle
+
+\hypertarget{total-points}{%
+\section{Total points:}\label{total-points}}
+
+\hypertarget{overview}{%
+\subsection{OVERVIEW}\label{overview}}
+
+This exercise accompanies the lessons in Environmental Data Analytics on
+data scraping.
+
+\hypertarget{directions}{%
+\subsection{Directions}\label{directions}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Change ``Student Name'' on line 3 (above) with your name.
+\item
+  Work through the steps, \textbf{creating code and output} that fulfill
+  each instruction.
+\item
+  Be sure to \textbf{answer the questions} in this assignment document.
+\item
+  When you have completed the assignment, \textbf{Knit} the text and
+  code into a single PDF file.
+\item
+  After Knitting, submit the completed exercise (PDF file) to the
+  dropbox in Sakai. Add your last name into the file name (e.g.,
+  ``Fay\_09\_Data\_Scraping.Rmd'') prior to submission.
+\end{enumerate}
+
+\hypertarget{set-up}{%
+\subsection{Set up}\label{set-up}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Set up your session:
+\end{enumerate}
+
+\begin{itemize}
+\tightlist
+\item
+  Check your working directory
+\item
+  Load the packages \texttt{tidyverse}, \texttt{rvest}, and any others
+  you end up using.
+\item
+  Set your ggplot theme
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#1}
+\FunctionTok{getwd}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "C:/Users/yliua/Desktop/Environmental_Data_Analytics_2022/Assignments"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(rvest)}
+\FunctionTok{library}\NormalTok{(lubridate)}
+
+\NormalTok{mytheme }\OtherTok{\textless{}{-}} \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{), }
+        \AttributeTok{legend.position =} \StringTok{"top"}\NormalTok{)}
+\FunctionTok{theme\_set}\NormalTok{(mytheme)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  We will be scraping data from the NC DEQs Local Water Supply Planning
+  website, specifically the Durham's 2020 Municipal Local Water Supply
+  Plan (LWSP):
+\end{enumerate}
+
+\begin{itemize}
+\tightlist
+\item
+  Navigate to \url{https://www.ncwater.org/WUDC/app/LWSP/search.php}
+\item
+  Change the date from 2020 to 2020 in the upper right corner.
+\item
+  Scroll down and select the LWSP link next to Durham Municipality.
+\item
+  Note the web address:
+  \url{https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010\&year=2020}
+\end{itemize}
+
+Indicate this website as the as the URL to be scraped. (In other words,
+read the contents into an \texttt{rvest} webpage object.)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#2}
+\NormalTok{web}\OtherTok{\textless{}{-}}\FunctionTok{read\_html}\NormalTok{(}\StringTok{"https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03{-}32{-}010\&year=2020"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  The data we want to collect are listed below:
+\end{enumerate}
+
+\begin{itemize}
+\item
+  From the ``1. System Information'' section:
+\item
+  Water system name
+\item
+  PSWID
+\item
+  Ownership
+\item
+  From the ``3. Water Supply Sources'' section:
+\item
+  max Daily Use (MGD) - for each month
+\end{itemize}
+
+In the code chunk below scrape these values, assigning them to three
+separate variables.
+
+\begin{quote}
+HINT: The first value should be ``Durham'', the second ``03-32-010'',
+the third ``Municipality'', and the last should be a vector of 12
+numeric values, with the first value being 36.0100.
+\end{quote}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#3}
+\NormalTok{water.system.name }\OtherTok{\textless{}{-}}\NormalTok{ web }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_nodes}\NormalTok{(}\StringTok{"div+ table tr:nth{-}child(1) td:nth{-}child(2)"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_text}\NormalTok{()}
+
+\NormalTok{pswid }\OtherTok{\textless{}{-}}\NormalTok{  web }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_nodes}\NormalTok{(}\StringTok{"td tr:nth{-}child(1) td:nth{-}child(5)"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_text}\NormalTok{()}
+
+\NormalTok{ownership }\OtherTok{\textless{}{-}}\NormalTok{  web }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_nodes}\NormalTok{(}\StringTok{"div+ table tr:nth{-}child(2) td:nth{-}child(4)"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_text}\NormalTok{()}
+
+\NormalTok{max.withdrawals.mgd }\OtherTok{\textless{}{-}}\NormalTok{  web }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_nodes}\NormalTok{(}\StringTok{"th\textasciitilde{} td+ td"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{html\_text}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Convert your scraped data into a dataframe. This dataframe should have
+  a column for each of the 4 variables scraped and a row for the month
+  corresponding to the withdrawal data. Also add a Date column that
+  includes your month and year in data format. (Feel free to add a Year
+  column too, if you wish.)
+\end{enumerate}
+
+\begin{quote}
+TIP: Use \texttt{rep()} to repeat a value when creating a dataframe.
+\end{quote}
+
+\begin{quote}
+NOTE: It's likely you won't be able to scrape the monthly widthrawal
+data in order. You can overcome this by creating a month column in the
+same order the data are scraped: Jan, May, Sept, Feb, etc\ldots{}
+\end{quote}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Plot the max daily withdrawals across the months for 2020
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#4}
+\NormalTok{df\_withdrawals }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\StringTok{"Month"} \OtherTok{=} \FunctionTok{c}\NormalTok{(}\StringTok{"Jan"}\NormalTok{,}\StringTok{"May"}\NormalTok{,}\StringTok{"Sep"}\NormalTok{,}\StringTok{"Feb"}\NormalTok{,}\StringTok{"Jun"}\NormalTok{, }\StringTok{"Oct"}\NormalTok{, }\StringTok{"Mar"}\NormalTok{,}\StringTok{"Jul"}\NormalTok{,}\StringTok{"Nov"}\NormalTok{,}\StringTok{"Apr"}\NormalTok{,}\StringTok{"Aug"}\NormalTok{,}\StringTok{"Dec"}\NormalTok{),}
+                             \StringTok{"Year"} \OtherTok{=} \FunctionTok{rep}\NormalTok{(}\DecValTok{2020}\NormalTok{,}\DecValTok{12}\NormalTok{),}
+                             \StringTok{"water.system.name"} \OtherTok{=}\NormalTok{ water.system.name,}
+                             \StringTok{"pswid"}\OtherTok{=}\NormalTok{ pswid,}
+                             \StringTok{"ownership"}\OtherTok{=}\NormalTok{ownership,}
+                             \StringTok{"max.withdrawals.mgd"} \OtherTok{=} \FunctionTok{as.numeric}\NormalTok{(max.withdrawals.mgd))}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Date =}\FunctionTok{my}\NormalTok{(}\FunctionTok{paste}\NormalTok{(Month,Year)))}
+
+
+\CommentTok{\#5}
+\FunctionTok{ggplot}\NormalTok{(df\_withdrawals,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{ Date,}\AttributeTok{y=}\NormalTok{max.withdrawals.mgd)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Max daily withdrawals across the months for 2020"}\NormalTok{,}
+       \AttributeTok{y=}\StringTok{"Withdrawal (mgd)"}\NormalTok{,}
+       \AttributeTok{x=}\StringTok{"Date"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{A09_DataScraping_files/figure-latex/create.a.dataframe.from.scraped.data-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\tightlist
+\item
+  Note that the PWSID and the year appear in the web address for the
+  page we scraped. Construct a function using your code above that can
+  scrape data for any PWSID and year for which the NC DEQ has data.
+  \textbf{Be sure to modify the code to reflect the year and site
+  scraped}.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#6.}
+\NormalTok{scrape.it }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(the\_year, the\_pwsid)\{}
+\NormalTok{  the\_scrape\_web}\OtherTok{\textless{}{-}}\FunctionTok{read\_html}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"https://www.ncwater.org/WUDC/app/LWSP/report.php?"}\NormalTok{, }\StringTok{"pwsid="}\NormalTok{, the\_pwsid, }\StringTok{"\&year="}\NormalTok{, the\_year))}
+
+\NormalTok{  water.system.name.tag }\OtherTok{\textless{}{-}}\StringTok{"div+ table tr:nth{-}child(1) td:nth{-}child(2)"}
+\NormalTok{  pswid.tag }\OtherTok{\textless{}{-}}\StringTok{"td tr:nth{-}child(1) td:nth{-}child(5)"}
+\NormalTok{  ownership.tag }\OtherTok{\textless{}{-}}\StringTok{"div+ table tr:nth{-}child(2) td:nth{-}child(4)"}
+\NormalTok{  max.withdrawals.mgd.tag }\OtherTok{\textless{}{-}}  \StringTok{"th\textasciitilde{} td+ td"}
+
+\NormalTok{  the.water.system.name }\OtherTok{\textless{}{-}}\NormalTok{ the\_scrape\_web }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{html\_nodes}\NormalTok{(water.system.name.tag) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{html\_text}\NormalTok{()}
+\NormalTok{  the.pswid }\OtherTok{\textless{}{-}}\NormalTok{ the\_scrape\_web }\SpecialCharTok{\%\textgreater{}\%}   \FunctionTok{html\_nodes}\NormalTok{(pswid.tag) }\SpecialCharTok{\%\textgreater{}\%}  \FunctionTok{html\_text}\NormalTok{()}
+\NormalTok{  the.ownership }\OtherTok{\textless{}{-}}\NormalTok{ the\_scrape\_web }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{html\_nodes}\NormalTok{(ownership.tag) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{html\_text}\NormalTok{()}
+\NormalTok{  the.max.withdrawals.mgd }\OtherTok{\textless{}{-}}\NormalTok{ the\_scrape\_web }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{html\_nodes}\NormalTok{(max.withdrawals.mgd.tag) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{html\_text}\NormalTok{()}
+
+\NormalTok{  df\_custom }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\StringTok{"Month"} \OtherTok{=} \FunctionTok{c}\NormalTok{(}\StringTok{"Jan"}\NormalTok{,}\StringTok{"May"}\NormalTok{,}\StringTok{"Sep"}\NormalTok{,}\StringTok{"Feb"}\NormalTok{,}\StringTok{"Jun"}\NormalTok{, }\StringTok{"Oct"}\NormalTok{, }\StringTok{"Mar"}\NormalTok{,}\StringTok{"Jul"}\NormalTok{,}\StringTok{"Nov"}\NormalTok{,}\StringTok{"Apr"}\NormalTok{,}\StringTok{"Aug"}\NormalTok{,}\StringTok{"Dec"}\NormalTok{),}
+                        \StringTok{"Year"} \OtherTok{=} \FunctionTok{rep}\NormalTok{(the\_year,}\DecValTok{12}\NormalTok{),}
+                        \StringTok{"max.withdrawals.mgd"} \OtherTok{=} \FunctionTok{as.numeric}\NormalTok{(the.max.withdrawals.mgd))}\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{the.water.system.name =} \SpecialCharTok{!!}\NormalTok{the.water.system.name,}
+         \AttributeTok{the.pswid =} \SpecialCharTok{!!}\NormalTok{the.pswid,}
+         \AttributeTok{the.ownership =} \SpecialCharTok{!!}\NormalTok{the.ownership,}
+         \AttributeTok{Date =} \FunctionTok{my}\NormalTok{(}\FunctionTok{paste}\NormalTok{(Month,}\StringTok{"{-}"}\NormalTok{,the\_year)))}
+  \FunctionTok{return}\NormalTok{(df\_custom)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{6}
+\tightlist
+\item
+  Use the function above to extract and plot max daily withdrawals for
+  Durham (PWSID=`03-32-010') for each month in 2015
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#7}
+\NormalTok{df\_2015}\OtherTok{\textless{}{-}}\FunctionTok{scrape.it}\NormalTok{(}\DecValTok{2015}\NormalTok{,}\StringTok{\textquotesingle{}03{-}32{-}010\textquotesingle{}}\NormalTok{)}
+\FunctionTok{view}\NormalTok{(df\_2015)}
+
+\FunctionTok{ggplot}\NormalTok{(df\_2015,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{ Date,}\AttributeTok{y=}\NormalTok{max.withdrawals.mgd)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Max daily withdrawals across the months for 2020"}\NormalTok{,}
+       \AttributeTok{y=}\StringTok{"Withdrawal (mgd)"}\NormalTok{,}
+       \AttributeTok{x=}\StringTok{"Date"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{A09_DataScraping_files/figure-latex/fetch.and.plot.Durham.2015.data-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{7}
+\tightlist
+\item
+  Use the function above to extract data for Asheville (PWSID =
+  01-11-010) in 2015. Combine this data with the Durham data collected
+  above and create a plot that compares the Asheville to Durham's water
+  withdrawals.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#8}
+\NormalTok{df\_Ash}\OtherTok{\textless{}{-}}\FunctionTok{scrape.it}\NormalTok{(}\DecValTok{2015}\NormalTok{,}\StringTok{\textquotesingle{}01{-}11{-}010\textquotesingle{}}\NormalTok{)}
+\FunctionTok{view}\NormalTok{(df\_Ash)}
+
+\FunctionTok{ggplot}\NormalTok{(df\_Ash,}\FunctionTok{aes}\NormalTok{(Date)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{max.withdrawals.mgd,}\AttributeTok{color =} \StringTok{"Ashville"}\NormalTok{)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{df\_2015}\SpecialCharTok{$}\NormalTok{max.withdrawals.mgd, }\AttributeTok{color =} \StringTok{"Durham"}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Max daily withdrawals between Durham and Ashville in 2015"}\NormalTok{,}
+       \AttributeTok{y=}\StringTok{"Withdrawal (mgd)"}\NormalTok{,}
+       \AttributeTok{x=}\StringTok{"Date"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{A09_DataScraping_files/figure-latex/fetch.and.plot.Durham.and.Ashville.2015.data-1.pdf}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{8}
+\tightlist
+\item
+  Use the code \& function you created above to plot Asheville's max
+  daily withdrawal by months for the years 2010 thru 2020.Add a smoothed
+  line to the plot.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#9}
+\NormalTok{the\_years }\OtherTok{=} \FunctionTok{rep}\NormalTok{(}\DecValTok{2010}\SpecialCharTok{:}\DecValTok{2020}\NormalTok{)}
+\NormalTok{Ashville }\OtherTok{=} \StringTok{\textquotesingle{}01{-}11{-}010\textquotesingle{}}
+
+\NormalTok{the\_dfs }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(}\AttributeTok{X =}\NormalTok{ the\_years,}
+                  \AttributeTok{FUN =}\NormalTok{ scrape.it,}
+                  \AttributeTok{the\_pwsid=}\NormalTok{Ashville)}
+
+\NormalTok{the\_dfs }\OtherTok{\textless{}{-}} \FunctionTok{map}\NormalTok{(the\_years,scrape.it, }\AttributeTok{the\_pwsid=}\NormalTok{Ashville)}
+
+\NormalTok{the\_df }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(the\_dfs)}
+
+\FunctionTok{ggplot}\NormalTok{(the\_df,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Date,}\AttributeTok{y=}\NormalTok{max.withdrawals.mgd)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method=}\StringTok{"loess"}\NormalTok{,}\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \FunctionTok{paste}\NormalTok{(}\StringTok{"2010{-}2020 Maximum Water Withdraw in Ashvielle"}\NormalTok{),}
+       \AttributeTok{y=}\StringTok{"Max Withdrawal (mgd)"}\NormalTok{,}
+       \AttributeTok{x=}\StringTok{"Date"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using formula 'y ~ x'
+\end{verbatim}
+
+\includegraphics{A09_DataScraping_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+\begin{quote}
+Question: Just by looking at the plot (i.e.~not running statistics),
+does Asheville have a trend in water usage over time? Yes, the water
+usage appears to increase over time.
+\end{quote}
+
+\end{document}
