@@ -1,13 +1,11 @@
 ---
 title: "Assignment 09: Data Scraping"
 author: "Azura Liu"
-output: html_document
+output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
 ---
-
-# I was unable to knit as PDF due to Latex failure
 
 # Total points:
 
